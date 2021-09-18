@@ -1,4 +1,4 @@
-# Tuya IoTOS Embeded Demo Bluetooth LE LED Driver
+# Tuya IoTOS Embedded Bluetooth LE LED Driver
 
 [English](./README.md) | [中文](./README_zh.md)
 
@@ -6,70 +6,70 @@
 
 ## Introduction
 
-This demo is based on [Tuya IoT Platform](https://iot.tuya.com/), Tuya Smart APP, IoTOS Embeded Ble SDK, using Tuya BLE series modules and 2 leds to quickly implement a led driver. The user can control the status of the led through the Tuya Smart APP. The demo provides led driver related interfaces, including initial pin and active level settings, led on and off control, flash mode settings (flash at specified time, flash at specified count,  flash forever), and the callback function settings for the end of flashing.
+In this demo, we will show you how to implement an LED driver. Based on the [Tuya IoT Platform](https://iot.tuya.com/), we use Tuya's Bluetooth LE module, SDK, and the Tuya Smart app to connect an LED to the cloud so that you can control the LED on the mobile app. This demo provides LED driver interfaces to help you quickly implement pin and active level configuration, LED on/off, blinking effects (blinking duration, times, and steady blinking), and the blinking callback.
 
 <br>
 
+## Get started
 
-## Quick start
+### Set up development environment
 
-### Development environment setup
+- Install the integrated development environment (IDE) as per your chip platform.
 
-- Install the integrated development environment (IDE) as per the requirements of the original chip SDK.
-- Find the download URL of the Tuya BLE SDK Demo Project from the following table. Refer to the `README.md` file under each branch to import the project.
+- Find the download URL of the Tuya Bluetooth LE SDK Demo Project from the following table. Refer to the `README.md` file under each branch to import the project.
 
-|   Platform   |  Model   |                       Download Address                       |
-| :----------: | :------: | :----------------------------------------------------------: |
-|    Nordic    | nrf52832 | [tuya_ble_sdk_Demo_Project_nrf52832.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_nrf52832.git) |
-|   Realtek    | RTL8762C | [tuya_ble_sdk_Demo_Project_rtl8762c.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_rtl8762c.git) |
-|    Telink    | TLSR825x | [tuya_ble_sdk_Demo_Project_tlsr8253.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_tlsr8253.git) |
-| Silicon Labs |   BG21   |                         Coming soon.                         |
-|    Beken     | BK3431Q  | [Tuya_ble_sdk_demo_project_bk3431q.git](https://github.com/TuyaInc/Tuya_ble_sdk_demo_project_bk3431q.git) |
-|    Beken     |  BK3432  | [ tuya_ble_sdk_Demo_Project_bk3432.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_bk3432.git) |
-|   Cypress    |  Psoc63  | [tuya_ble_sdk_Demo_Project_PSoC63.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_PSoC63.git) |
+   | Chip platform | Model | Download URL |
+   | :----------: | :------: | :----------------------------------------------------------: |
+   | Nordic | nrf52832 | [tuya_ble_sdk_Demo_Project_nrf52832.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_nrf52832.git) |
+   | Realtek | RTL8762C | [tuya_ble_sdk_Demo_Project_rtl8762c.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_rtl8762c.git) |
+   | Telink | TLSR825x | [tuya_ble_sdk_Demo_Project_tlsr8253.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_tlsr8253.git) |
+   | Silicon Labs | BG21 | Coming soon. |
+   | Beken | BK3431Q | [tuya_ble_sdk_demo_project_bk3431q.git](https://github.com/TuyaInc/Tuya_ble_sdk_demo_project_bk3431q.git) |
+   | Beken | BK3432 | [tuya_ble_sdk_Demo_Project_bk3432.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_bk3432.git) |
+   | Cypress | Psoc63 | [tuya_ble_sdk_Demo_Project_PSoC63.git](https://github.com/TuyaInc/tuya_ble_sdk_Demo_Project_PSoC63.git) |
 
 <br>
 
-### Compile and burn
+### Compile and flash
 
 - Edit code
 
-  1. In `tuya_ble_app_demo.h`, specify the PID of the product you have created on the [Tuya IoT Platform](https://iot.tuya.com/).
+   1. In `tuya_ble_app_demo.h`, specify the PID of the product you have created on the [Tuya IoT Platform](https://iot.tuya.com/).
 
-     ```
-      #define APP_PRODUCT_ID     "xxxxxxxx"
-     ```
+      ```
+       #define APP_PRODUCT_ID     "xxxxxxxx"
+      ```
 
-     Change `xxxxxxxx` to the PID.
+      Change `xxxxxxxx` to the PID.
 
-  2. In `tuya_ble_app_demo.h`, specify the `authkey` and `UUID`.
+   2. In `tuya_ble_app_demo.c`, specify the `authkey` and `UUID`.
 
-     ```
-      static const char auth_key_test[] = "yyyyyyyy";
-      static const char device_id_test[] = "zzzzzzzz";
-     ```
+      ```
+       static const char auth_key_test[] = "yyyyyyyy";
+       static const char device_id_test[] = "zzzzzzzz";
+      ```
 
-     Change `yyyyyyyy` to the `authkey` and `zzzzzzzz` to the `UUID`.
+      Change `yyyyyyyy` to your authkey and `zzzzzzzz` to your UUID.
 
 - Compile code
 
-  Compile the edited code, download the code to the hardware, and run it. You may need to download the stack and bootloader depending on your chip models. Check the logs and use the third-party Bluetooth debugging app (such as LightBlue for iOS) to verify the Bluetooth broadcast.
+   Compile the edited code, download the code to the hardware, and run it. You may need to download the stack and bootloader depending on your chip models. Check the logs and use the third-party Bluetooth debugging app (such as LightBlue for iOS) to verify the Bluetooth broadcast.
 
 <br>
 
-### File description
+### File introduction
 ```
 ├── src         /* Source code files */
 |    ├── sdk
-|    |    └── tuya_uart_common_handler.c        /* Code for UART communication */
+|    |    └── tuya_uart_common_handler.c        /* Code for UART communication  */
 |    ├── driver
 |    |    └── tuya_led.c                        /* LED driver */
 |    ├── tuya_ble_app_demo.c                    /* Entry file of application layer */
-|    └── tuya_demo_led_driver.c                 /* LED driver application demo code */
+|    └── tuya_demo_led_driver.c                 /* Sample code */
 |
 └── include     /* Header files */
      ├── common
-     |    └── tuya_common.h                     /* Common types and marco define */
+     |    └── tuya_common.h                     /* Common types and macros */
      ├── sdk
      |    ├── custom_app_uart_common_handler.h  /* Code for UART communication */
      |    ├── custom_app_product_test.h         /* Implementation of custom production test items */
@@ -77,29 +77,28 @@ This demo is based on [Tuya IoT Platform](https://iot.tuya.com/), Tuya Smart APP
      ├── driver
      |    └── tuya_led.h                        /* LED driver */
      ├── tuya_ble_app_demo.h                    /* Entry file of application layer */
-     └── tuya_demo_led_driver.h                	/* LED driver application demo code */
+     └── tuya_demo_led_driver.h                  /* Sample code */
 ```
 
 <br>
 
-### Application entry
+### Entry to application
+Entry file: `/tuya_ble_app/tuya_ble_app_demo.c`
 
-Entry file: /tuya_ble_app/tuya_ble_app_demo.c
-
-- `void tuya_ble_app_init(void)` is executed to initialize Tuya IoTOS Embedded Bluetooth LE SDK. This function is executed only once.
-- `void app_exe()` is used to execute the application code. It is executed in a loop.
++ `void tuya_ble_app_init(void)` is executed to initialize Tuya IoTOS Embedded Bluetooth LE SDK. This function is executed only once.
++ `void app_exe()` is used to execute the application code. It is executed in a loop.
 
 <br>
 
 ### Data point (DP)
 
-|   Function name    | tuya_ble_dp_data_report                                      |
-| :----------------: | :----------------------------------------------------------- |
+| Function | tuya_ble_dp_data_report |
+| :------: | :----------------------------------------------------------- |
 | Function prototype | tuya_ble_status_t tuya_ble_dp_data_report(uint8_t *p_data,uint32_t len); |
-|  Feature overview  | Reports DP data.                                             |
-|     Parameter      | `p_data [in]`: DP data. `len[in]`: data length. It cannot exceed `TUYA_BLE_REPORT_MAX_DP_DATA_LEN`. |
-|    Return value    | `TUYA_BLE_SUCCESS`: sent successfully. <br/>`TUYA_BLE_ERR_INVALID_PARAM`: invalid parameter. <br/>`TUYA_BLE_ERR_INVALID_STATE`: failed to send data due to the current Bluetooth connection, such as Bluetooth disconnected. <br/>`TUYA_BLE_ERR_NO_MEM`: failed to request memory resources. <br/>`TUYA_BLE_ERR_INVALID_LENGTH`: data length error. <br/>`TUYA_BLE_ERR_NO_EVENT`: other errors. |
-|      Remarks       | `application` calls this function to send DP data to the mobile app. |
+| Feature overview | Reports DP data. |
+| Parameters | `p_data [in]`: DP data. <br> `len[in]`: data length. It cannot exceed `TUYA_BLE_REPORT_MAX_DP_DATA_LEN`. |
+| Return value | `TUYA_BLE_SUCCESS`: sent successfully. <br/>`TUYA_BLE_ERR_INVALID_PARAM`: invalid parameter. <br/>`TUYA_BLE_ERR_INVALID_STATE`: failed to send data due to the current Bluetooth connection, such as Bluetooth disconnected. <br/>`TUYA_BLE_ERR_NO_MEM`: failed to request memory allocation. <br/>`TUYA_BLE_ERR_INVALID_LENGTH`: data length error. <br/>`TUYA_BLE_ERR_NO_EVENT`: other errors. |
+| Notes | `application` calls this function to send DP data to the mobile app. |
 
 Parameter description:
 
@@ -107,32 +106,42 @@ The [Tuya IoT Platform](https://iot.tuya.com/) manages data through DPs. The dat
 
 - `Dp_id`: the DP ID of a data point defined on the Tuya IoT platform. It is one byte.
 
+
 - `Dp_type`: the data type. It is one byte.
-  - `#define DT_RAW 0`: raw type.
-  - `#define DT_BOOL 1`: Boolean type.
-  - `#define DT_VALUE 2`: value type. The value range is specified when a DP of value type is created on the Tuya IoT Platform.
-  - `#define DT_STRING 3`: string type.
-  - `#define DT_ENUM 4`: enum type.
-  - `#define DT_BITMAP 5`: bitmap type.
+
+   ​ `#define DT_RAW 0`       raw type.
+
+   ​ `#define DT_BOOL 1`     Boolean type.
+
+   ​ `#define DT_VALUE 2`   value type. The value range is specified when a DP of value type is created on the Tuya IoT Platform.
+
+   ​ `#define DT_STRING 3`   string type.
+
+   ​ `#define DT_ENUM 4 `     enum type.
+
+   ​ `#define DT_BITMAP 5`  bitmap type.
+
 - `Dp_len`: It can be one byte or two bytes. Currently, Bluetooth only supports one byte, so the data of a single DP can be up to 255 bytes.
+
 
 - `Dp_data`: the DP data, with `dp_len` byte(s).
 
+
 The data that the parameter `p_data` points to must be packaged in the following format for reporting.
 
-| DP 1 data |         |        |         |  –   | DP n data |         |        |         |
-| :-------: | :-----: | :----: | :-----: | :--: | :-------: | :-----: | :----: | :-----: |
-|     1     |    2    |   3    |    4    |  –   |     n     |   n+1   |  n+2   |   n+3   |
-|   Dp_id   | Dp_type | Dp_len | Dp_data |  –   |   Dp_id   | Dp_type | Dp_len | Dp_data |
+| DP 1 data |         |        |         | — | DP n data |         |        |         |
+| :---------: | :-----: | :----: | :-----: | :--- | :---------: | :-----: | :----: | :-----: |
+| 1 | 2 | 3 | 4 | — | n | n+1 | n+2 | n+3 |
+| Dp_id | Dp_type | Dp_len | Dp_data | — | Dp_id | Dp_type | Dp_len | Dp_data |
 
-When this function is called, the maximum data length of is `TUYA_BLE_REPORT_MAX_DP_DATA_LEN`, which is 255+3 currently.
+When this function is called, the maximum data length is `TUYA_BLE_REPORT_MAX_DP_DATA_LEN`, which is `255+3` currently.
 
 <br>
 
 ### Pin configuration
 
-| Peripheral | I/O |
-| ----- | ---- |
+| Peripherals | I/O |
+| ---- | ---- |
 | LED1 | PD4 |
 | LED2 | PB6 |
 
@@ -146,11 +155,12 @@ When this function is called, the maximum data length of is `TUYA_BLE_REPORT_MAX
 
 <br>
 
-## Technical Support
+
+## Technical support
 
 You can get support from Tuya with the following methods:
 
-+ [Tuya AI+IoT Developer Platform](https://developer.tuya.com/en/)
++ [Tuya Developer Platform](https://developer.tuya.com/en/)
 + [Help Center](https://support.tuya.com/en/help)
 + [Service & Support](https://service.console.tuya.com)
 
